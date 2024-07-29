@@ -19,28 +19,37 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    fetchBooks(); // Fetch all books initially
-  }
-
-  Future<void> fetchBooks({String query = ''}) async {
-    List<Book> booksFromApi = await getBooksByName(query);
-    setState(() {
-      filteredBooks = booksFromApi; // Update filteredBooks with fetched data
+    fetchBooks();
+    _searchController.addListener(() {
+      setState(() {
+        _filterBooks();
+      });
     });
   }
 
-  void _searchBooks() {
-    final  String query = _searchController.text;
-    fetchBooks(query: query); // Fetch books based on the search query
+  Future<void> fetchBooks() async {
+    await getBooks();
+    setState(() {
+      filteredBooks = books; // Initialize filteredBooks with all books
+    });
+  }
+
+  void _filterBooks() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      filteredBooks = books.where((book) {
+        final titleLower = book.title.toLowerCase();
+        return titleLower.contains(query);
+      }).toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amber,
+        backgroundColor: Colors.deepPurple,
         actions: [
-          SizedBox(width: 5),
           IconButton(onPressed: () {}, icon: Icon(Icons.home)),
           IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
           IconButton(
@@ -58,108 +67,126 @@ class _HomeState extends State<Home> {
           ),
         ],
         title: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 18),
             Text(
-              'Maliks',
-              style: TextStyle(fontSize: 15),
-            ),
-            Container(
-              child: TextField(
-                controller: _searchController,
-                style: TextStyle(fontSize: 15),
-                decoration: InputDecoration(
-                  fillColor: Colors.blueAccent,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  hintText: 'Search for book',
-                  prefixIcon: Icon(Icons.search),
-                  prefixIconColor: Colors.black12,
-                ),
+              'Malik\'s Bookstore',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
-            SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _searchBooks,
-              child: Text('Search'),
+            SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4.0,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _searchController,
+                style: TextStyle(fontSize: 16),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  hintText: 'Search for book...',
+                  prefixIcon: Icon(Icons.search, color: Colors.grey),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                ),
+              ),
             ),
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredBooks.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.all(4.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 8.0,
+            childAspectRatio: 0.7,
+          ),
+          itemCount: filteredBooks.length,
+          itemBuilder: (context, index) {
+            return Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              elevation: 4.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
+                    child: Image.network(
+                      filteredBooks[index].imageUrl,
+                      width: double.infinity,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      filteredBooks[index].title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      SizedBox(height: 8),
-                      Text(
-                        filteredBooks[index].title,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Details(
+                                book: filteredBooks[index],
+                              ),
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.info, color: Colors.blueAccent),
                       ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image.network(
-                          filteredBooks[index].imageUrl,
-                          width: 400,
-                          height: 120,
-                          fit: BoxFit.cover,
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (selectedBooks.contains(filteredBooks[index])) {
+                              selectedBooks.remove(filteredBooks[index]);
+                            } else {
+                              selectedBooks.add(filteredBooks[index]);
+                            }
+                          });
+                        },
+                        icon: Icon(
+                          selectedBooks.contains(filteredBooks[index])
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank,
+                          color: Colors.green,
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Details(
-                                    book: filteredBooks[index],
-                                  ),
-                                ),
-                              );
-                            },
-                            icon: Icon(Icons.book),
-                          ),
-                          Checkbox(
-                            value: selectedBooks.contains(filteredBooks[index]),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                if (value == true) {
-                                  selectedBooks.add(filteredBooks[index]);
-                                } else {
-                                  selectedBooks.remove(filteredBooks[index]);
-                                }
-                              });
-                            },
-                          ),
-                        ],
                       ),
                     ],
                   ),
-                );
-              },
-            ),
-          ),
-        ],
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

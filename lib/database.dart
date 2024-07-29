@@ -52,7 +52,7 @@ Future getBooks() async {
             double.tryParse(row['Price'].toString()) ?? 0.0 // Price
         );
         books.add(b);
-
+        print('Books: $books');
       }
     } else {
       // Error response
@@ -61,37 +61,6 @@ Future getBooks() async {
     }
   } catch (e) {
     print('Error occurred: $e');
-  }
-}
-
-
-Future<List<Book>> getBooksByName(String name) async {
-  final url = Uri.http(_baseUrl, 'getBookByName.php', {'name': name});
-  try {
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final List<dynamic> bookJson = jsonDecode(response.body);
-      List<Book> books = [];
-      for (var row in bookJson) {
-        Book b = Book(
-            row['Title'],         // Title
-            row['imageURL'],      // imageURL
-            row['Description'],   // Description
-            row['Author'],        // Author
-            double.tryParse(row['Price'].toString()) ?? 0.0 // Price
-        );
-        books.add(b);
-      }
-      return books;
-    } else {
-      print('Failed to load books. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-      return [];
-    }
-  } catch (e) {
-    print('Error occurred: $e');
-    return [];
   }
 }
 
