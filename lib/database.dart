@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:untitled15/Book.dart';
 import 'package:untitled15/Home.page.dart';
 
 final String _baseUrl = "shopp2.atwebpages.com";
 
-Future<void> signInUser(BuildContext context,String username, String password) async {
+Future<void> signInUser(
+    BuildContext context, String username, String password) async {
   final url = Uri.http(_baseUrl, 'validate_user.php');
   final response = await http.post(
     url,
@@ -27,14 +31,67 @@ Future<void> signInUser(BuildContext context,String username, String password) a
     print('Failed to sign in: ${response.body}');
   }
 }
-Future getBooks()async{
+
+List<Book> books = [];
+Future getBooks() async {
+  print("t1");
   final url = Uri.http(_baseUrl, 'getBook.php');
-  final response = await http.post(
-    url,
-    body: {
+  try {
+    final response = await http.get(url);
 
-    },
-  ).timeout(const Duration(seconds: 10));
+    if (response.statusCode == 200) {
+      final List<dynamic> bookJson = jsonDecode(response.body);
+      books.clear(); // Clear the list before adding new items
+      for (var row in bookJson) {
+        // Map JSON fields to Book class
+        Book b = Book(
+            row['Title'],         // Title
+            row['imageURL'],      // imageURL
+            row['Description'],   // Description
+            row['Author'],        // Author
+            double.tryParse(row['Price'].toString()) ?? 0.0 // Price
+        );
+        books.add(b);
 
-
+      }
+    } else {
+      // Error response
+      print('Failed to load books. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+  }
 }
+
+
+Future<List<Book>> getBooksByName(String name) async {
+  final url = Uri.http(_baseUrl, 'getBookByName.php', {'name': name});
+  try {
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> bookJson = jsonDecode(response.body);
+      List<Book> books = [];
+      for (var row in bookJson) {
+        Book b = Book(
+            row['Title'],         // Title
+            row['imageURL'],      // imageURL
+            row['Description'],   // Description
+            row['Author'],        // Author
+            double.tryParse(row['Price'].toString()) ?? 0.0 // Price
+        );
+        books.add(b);
+      }
+      return books;
+    } else {
+      print('Failed to load books. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      return [];
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+    return [];
+  }
+}
+

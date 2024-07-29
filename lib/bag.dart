@@ -41,7 +41,7 @@ class _BagState extends State<Bag> {
                 return ListTile(
                   leading: Image.network(widget.selectedBooks[index].imageUrl),
                   title: Text(widget.selectedBooks[index].title),
-                  subtitle: Text(widget.selectedBooks[index].decrption),
+                  subtitle: Text(widget.selectedBooks[index].description),
                 );
               },
             ),

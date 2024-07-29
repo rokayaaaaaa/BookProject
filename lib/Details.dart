@@ -33,11 +33,11 @@ final Book book;
               ),
               SizedBox(height: 10),
               Text(
-                'Author:${book.Author}',
+                'Author:${book.author}',
                 style: TextStyle(fontSize: 16),
                 textAlign: TextAlign.center,
               ),
-              Text( '${book.decrption}',
+              Text( '${book.description}',
 
                 style: TextStyle(fontSize: 16),
                 textAlign: TextAlign.center,
