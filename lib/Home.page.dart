@@ -88,9 +88,9 @@ class _HomeState extends State<Home> {
                           textAlign: TextAlign.center,
                         ),
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(10.0),
                           child: Image.network(
-                            books[index].imageUrl,
+                            books[index].imageUrl,width:400 ,height: 120,
                           ),
                         ),
                         Row(
