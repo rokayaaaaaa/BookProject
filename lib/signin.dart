@@ -3,7 +3,7 @@ import 'package:untitled15/Home.page.dart';
 
 import 'database.dart';
 
-class UserValidationApp extends StatelessWidget {
+class UserValidation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

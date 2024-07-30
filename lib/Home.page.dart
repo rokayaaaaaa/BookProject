@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
     final query = _searchController.text.toLowerCase();
     setState(() {
       filteredBooks = books.where((book) {
-        final titleLower = book.title.toLowerCase();
+        final titleLower = book.title.toUpperCase();
         return titleLower.contains(query);
       }).toList();
     });
@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.amber,
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Icons.home)),
           IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
@@ -70,14 +70,14 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Malik\'s Bookstore',
+              'Maliks',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 0),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -92,7 +92,7 @@ class _HomeState extends State<Home> {
               ),
               child: TextField(
                 controller: _searchController,
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 14),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
