@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart 'as http;
-import 'package:untitled15/Home.page.dart'; // Ensure this import points to the correct file
+import 'package:untitled15/Home.page.dart';
+import 'signup.dart';
+import 'dart:convert';
 
-import 'database.dart'; // Ensure this import points to the correct file
+
+import 'database.dart';
 
 class UserValidation extends StatelessWidget {
   @override
@@ -30,8 +33,9 @@ class _UserValidationScreenState extends State<UserValidationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Maliks'),
+        title: Text('Maliks',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 70,color: Colors.white),),
         centerTitle: true,
+        backgroundColor: Colors.amber,
       ),
       body: Stack(
         children: [
@@ -57,7 +61,8 @@ class _UserValidationScreenState extends State<UserValidationScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'Welcome\nSign in',
+
+                            'Login',
                         style: TextStyle(fontSize: 30, color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
@@ -112,14 +117,16 @@ class _UserValidationScreenState extends State<UserValidationScreen> {
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
+                        style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.amber),),
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RegistrationScreen()),
+                                builder: (context) =>Adduser()),
                           );
                         },
-                        child: Text('Register'),
+                        child: Text('SignUp'),
                       ),
                     ],
                   ),
@@ -133,16 +140,5 @@ class _UserValidationScreenState extends State<UserValidationScreen> {
   }
 }
 
-class RegistrationScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Registration'),
-      ),
-      body: Center(
-        child: Text('Registration Page'),
-      ),
-    );
-  }
-}
+
+

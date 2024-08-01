@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Book.dart';
-import 'package:untitled15/Home.page.dart';
+import 'Home.page.dart';
 
 
 class Bag extends StatefulWidget {
@@ -30,12 +30,14 @@ class _BagState extends State<Bag> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.amber,
         title: Text('Selected Books'),
       ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
+
               itemCount: widget.selectedBooks.length,
               itemBuilder: (context, index) {
                 return ListTile(
@@ -48,7 +50,7 @@ class _BagState extends State<Bag> {
 
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(15.0),
             child: Text('Total Price: \$${totalPrice.toStringAsFixed(2)}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'bag.dart';
-import 'package:untitled15/Book.dart';
+import 'Book.dart';
 import 'Details.dart';
 import 'database.dart';
+import 'signin.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -38,7 +39,7 @@ class _HomeState extends State<Home> {
     final query = _searchController.text.toLowerCase();
     setState(() {
       filteredBooks = books.where((book) {
-        final titleLower = book.title.toUpperCase();
+        final titleLower = book.title.toLowerCase();
         return titleLower.contains(query);
       }).toList();
     });
@@ -49,35 +50,10 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
-        actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.home)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
-          IconButton(
-            icon: Icon(Icons.list),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Bag(
-                    selectedBooks: selectedBooks,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Maliks',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 0),
+            SizedBox(height: 5),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -106,28 +82,49 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserValidation()));
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.shopping_bag),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Bag(
+                    selectedBooks: selectedBooks,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20.0),
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 8.0,
+            crossAxisSpacing: 10.0,
+            mainAxisSpacing: 10.0,
             childAspectRatio: 0.7,
           ),
           itemCount: filteredBooks.length,
           itemBuilder: (context, index) {
             return Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(15.0),
               ),
-              elevation: 4.0,
+              elevation: 5.0,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(9.0)),
                     child: Image.network(
                       filteredBooks[index].imageUrl,
                       width: double.infinity,
@@ -147,6 +144,7 @@ class _HomeState extends State<Home> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -177,11 +175,12 @@ class _HomeState extends State<Home> {
                           selectedBooks.contains(filteredBooks[index])
                               ? Icons.check_box
                               : Icons.check_box_outline_blank,
-                          color: Colors.green,
+                          color: Colors.amber,
                         ),
                       ),
                     ],
                   ),
+                  SizedBox(height: 10),
                 ],
               ),
             );

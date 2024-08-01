@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
-import 'package:flutter/services.dart';
+import 'package:untitled15/Home.page.dart';
 
- final String _baseUrl = "shopp2.atwebpages.com";
-
+final String _baseUrl = "shopp2.atwebpages.com";
 
 class Adduser extends StatefulWidget {
   const Adduser({super.key});
 
   @override
-  State<Adduser> createState() => _AddCategoryState();
+  State<Adduser> createState() => _AdduserState();
 }
 
-class _AddCategoryState extends State<Adduser> {
+class _AdduserState extends State<Adduser> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -22,7 +21,6 @@ class _AddCategoryState extends State<Adduser> {
   String _responseMessage = '';
   EncryptedSharedPreferences _encryptedData = EncryptedSharedPreferences();
 
-  //
   bool _loading = false;
 
   @override
@@ -30,119 +28,193 @@ class _AddCategoryState extends State<Adduser> {
     _confirmPasswordController.dispose();
     _passwordController.dispose();
     _usernameController.dispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(actions: [
-          IconButton(onPressed: () {
-            _encryptedData.remove('myKey').then((success) =>
-                Navigator.of(context).pop());
-          }, icon: const Icon(Icons.logout))
-        ],
-          title: const Text('Add Category'),
-          centerTitle: true,
-          // the below line disables the back button on the AppBar
-          automaticallyImplyLeading: false,
-        ),
-        body: Center(child: Form(
-          key: _formKey, // key to uniquely identify the form when performing validation
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 10),
-              SizedBox(width: 200, child: TextFormField(controller: _usernameController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter ID',
-                ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter id';
-                  }
-                  return null;
-                },
-              )),
-              const SizedBox(height: 10),
-              SizedBox(width: 200, child: TextFormField(controller: _passwordController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter Name',
-                ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter name';
-                  }
-                  return null;
-                },
-              )),
-              const SizedBox(height: 10),
-              SizedBox(width: 200, child: TextFormField(controller: _passwordController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter password again',
-                ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'please enter to confirm';
-                  }
-                  return null;
-                },
-              )),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                // we need to prevent the user from sending another request, while current
-                // request is being processed
-                onPressed: _loading ? null : () { // disable button while loading
-                  if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      _loading = true;
-                    });
-                    adduser(update, _confirmPasswordController .text.toString(),_usernameController.text.toString());
-                  }
-                },
-                child: const Text('Submit'),
+      appBar: AppBar(
+        title: Text('Maliks',style: TextStyle(fontWeight:FontWeight.bold,fontSize: 70,color: Colors.white,fontFamily:'Raleway'),),
+        centerTitle: true,
+        backgroundColor: Colors.amber,
+
+        automaticallyImplyLeading: false,
+        leading:    IconButton(
+        onPressed: () {
+          _encryptedData.remove('myKey').then((success) => Navigator.of(context).pop());
+        },
+        icon: const Icon(Icons.logout),
+      ),
+
+
+      ),
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.amber, Colors.grey],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-              const SizedBox(height: 10),
-              Visibility(visible: _loading, child: const CircularProgressIndicator())
-            ],
+            ),
           ),
-        )));
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Form(
+              key: _formKey,
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+
+                        'Signup',
+                        style: TextStyle(fontSize: 30, color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        width: 300,
+                        child: TextFormField(
+                          controller: _usernameController,
+                          decoration: InputDecoration(
+                            labelText: 'Username',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(),
+                            hintText: 'Enter username',
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a username';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: 300,
+                        child: TextFormField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(),
+                            hintText: 'Enter password',
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a password';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: 300,
+                        child: TextFormField(
+                          controller: _confirmPasswordController,
+                          decoration: InputDecoration(
+                            labelText: 'Confirm Password',
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(),
+                            hintText: 'Confirm password',
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please confirm your password';
+                            }
+                            if (value != _passwordController.text) {
+                              return 'Passwords do not match';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: _loading
+                            ? null
+                            : () {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              _loading = true;
+                            });
+                            adduser(update, _passwordController.text, _usernameController.text);
+                          }
+                        },
+                        child: const Text('Submit'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Visibility(
+                        visible: _loading,
+                        child: const CircularProgressIndicator(),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        _responseMessage,
+                        style: TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  void update(String text) {
+  void update(String text, bool added) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
     setState(() {
       _loading = false;
     });
+    if(added){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>Home()),
+    );
+  }
   }
 
-
-// below function sends the cid, name and key using http post to the REST service
-  void adduser(Function(String text) update, String password, String name) async {
+  void adduser(Function(String text, bool added) update, String password, String name) async {
     try {
-      // we need to first retrieve and decrypt the key
-      String myKey = await _encryptedData.getString('myKey');
-      // send a JSON object using http post
-      final url = Uri.https(_baseUrl, 'signup.php');
+      String myKey = await _encryptedData.getString('mykey');
+      final url = Uri.http(_baseUrl, '/signup.php');
       final response = await http.post(
-          url,
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-            // 'Authorization': 'Bearer $myKey',
-          }, // convert the cid, name and key to a JSON object
-          body: convert.jsonEncode(<String, String>{
-            'password': '$password', 'name': name, 'key': myKey
-          })).timeout(const Duration(seconds: 5));
-      // call the update function
-      update(response.body);
-    }
-    catch (e) {
-      update("connection error");
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: convert.jsonEncode(<String, String>{
+          'password': password,
+          'username': name,
+          'key': myKey,
+        }),
+      ).timeout(const Duration(seconds: 5));
+      print(response.body);
+      update(response.body, true);
+    } catch (e) {
+      print(e.toString());
+      update("Connection error", false);
     }
   }
 }
